@@ -29,14 +29,14 @@ clean:
 BSC_SUPPRESSED_WARNINGS=G0046
 BSC_FLAGS=+RTS -Ksize -RTS\
   -vdir $(BUILD_DIR)/verilog \
-	-bdir $(BUILD_DIR)/bluespec \
-	-simdir $(BUILD_DIR)/sim \
-	-info-dir $(BUILD_DIR)/info \
-	-remove-dollar \
+  -bdir $(BUILD_DIR)/bluespec \
+  -simdir $(BUILD_DIR)/sim \
+  -info-dir $(BUILD_DIR)/info \
+  -remove-dollar \
   --aggressive-conditions --show-schedule \
-	-suppress-warnings $(BSC_SUPPRESSED_WARNINGS) \
-	-p +:src \
-	-verilog
+  -suppress-warnings $(BSC_SUPPRESSED_WARNINGS) \
+  -p +:%/Libraries/FPGA/Xilinx:src \
+  -verilog
 
 SRCS=$(wildcard src/*.bsv)
 TOP_LEVEL_VERILOG_FILE=$(BUILD_DIR)/verilog/$(TOP_LEVEL).v
