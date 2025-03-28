@@ -72,7 +72,7 @@ synth_ip [get_ips]
 # Run Synthesis
 
 set stage 1_synth
-synth_design -top $top_level -part $part -verbose
+synth_design -top $top_level -part $part -verbose -verilog_define BSV_NO_MAIN_V
 opt_design
 write_checkpoint -force $output_dir/${stage}.dcp
 report_timing_summary -file $output_dir/${stage}_timing_summary.rpt
