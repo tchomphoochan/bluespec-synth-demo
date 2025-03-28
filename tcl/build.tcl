@@ -41,6 +41,11 @@ set sources_v [ glob -nocomplain ./build/verilog/*.v ]
 if {[llength $sources_v] > 0 } {
   read_verilog $sources_v
 }
+# Read in all (if any) verilog files from Bluespec:
+set sources_bsv [ glob -nocomplain $env(BLUESPECDIR)/Verilog/*.v ]
+if {[llength $sources_bsv] > 0 } {
+  read_verilog $sources_bsv
+}
 # Read in constraint files:
 read_xdc ./xdc/$board.xdc
 # read in all (if any) hex memory files:
