@@ -49,6 +49,18 @@ $(TOP_LEVEL_VERILOG_FILE): $(BUILD_DIR)/verilog/%.v: src/%.bsv $(SRCS) | dirs
 	bsc $(BSC_FLAGS) -g $* -u src/$*.bsv
 
 # -------------------------
+# Test targets
+# -------------------------
+
+.PHONY: uart-tx-test
+uart-tx-test: | dirs
+	bsc $(BSC_FLAGS) -g mkUartTxTest -u src/mkUartTx.bsv
+
+.PHONY: uart-rx-test
+uart-rx-test: | dirs
+	bsc $(BSC_FLAGS) -g mkUartRxTest -u src/mkUartRx.bsv
+
+# -------------------------
 # Generate bitstreams from Verilog
 # -------------------------
 
