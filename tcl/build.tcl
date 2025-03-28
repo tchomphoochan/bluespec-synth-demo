@@ -31,9 +31,11 @@ set_part $part
 
 ## Source file setup
 
-# Read in all system verilog files:
-set sources_sv [ glob ./build/verilog/*.sv ]
-read_verilog -sv $sources_sv
+# Read in all (if any) system verilog files:
+set sources_sv [ glob -nocomplain ./build/verilog/*.sv ]
+if {[llength $sources_sv] > 0 } {
+  read_verilog $sources_sv
+}
 # Read in all (if any) verilog files:
 set sources_v [ glob -nocomplain ./build/verilog/*.v ]
 if {[llength $sources_v] > 0 } {
