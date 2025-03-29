@@ -4,7 +4,6 @@ import mkLedCtrl::*;
 import XilinxCells::*;
 import mkUartRx::*;
 import mkUartTx::*;
-import FIFOF::*;
 
 typedef TDiv#(125_000_000, 10) Period;
 
@@ -45,17 +44,10 @@ module mkTop_vcu108#(
   LedCtrl#(Period) ledCtrl <- mkLedCtrl(clocked_by sys_clk, reset_by sys_rst);
 
   UartRx rx <- mkUartRx(clocked_by sys_clk, reset_by sys_rst);
-  FIFOF#(Bit#(8)) receivedData <- mkSizedFIFOF(16, clocked_by sys_clk, reset_by sys_rst);
   UartTx tx <- mkUartTx(clocked_by sys_clk, reset_by sys_rst);
 
   rule receive;
     Bit#(8) data <- rx.receive();
-    receivedData.enq(data);
-  endrule
-
-  rule send;
-    Bit#(8) data = receivedData.first;
-    receivedData.deq;
     tx.send(data);
   endrule
 
