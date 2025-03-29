@@ -9,10 +9,6 @@ typedef TDiv#(125_000_000, 10) Period;
 
 (* always_enabled, always_ready *)
 interface Top_vcu108;
-  (* prefix = "", result = "btn" *)
-  method Action btn;
-  (* always_ready, always_enabled, prefix = "" *)
-  method Action uart_rxd((* port = "uart_rxd" *) Bit#(1) rx_bit);
   (* prefix = "", result = "uart_txd" *)
   method Bit#(1) uart_txd;
   (* prefix = "", result = "led" *)
@@ -23,7 +19,9 @@ endinterface
 module mkTop_vcu108#(
   Clock clk_125mhz_p,
   Clock clk_125mhz_n,
-  Reset rst // active high
+  Reset rst, // active high
+  Bool btn,
+  Bit#(1) uart_rxd
 )(Top_vcu108);
 
   // My own version:
@@ -43,7 +41,7 @@ module mkTop_vcu108#(
 
   LedCtrl#(Period) ledCtrl <- mkLedCtrl(clocked_by sys_clk, reset_by sys_rst);
 
-  UartRx rx <- mkUartRx(clocked_by sys_clk, reset_by sys_rst);
+  UartRx rx <- mkUartRx(uart_rxd, clocked_by sys_clk, reset_by sys_rst);
   UartTx tx <- mkUartTx(clocked_by sys_clk, reset_by sys_rst);
 
   rule receive;
@@ -51,8 +49,10 @@ module mkTop_vcu108#(
     tx.send(data);
   endrule
 
-  method Action btn = ledCtrl.switchDirection;
-  method Action uart_rxd(Bit#(1) rx_bit) = rx.rxd(rx_bit);
+  rule btnPressed if (btn);
+    ledCtrl.switchDirection;
+  endrule
+
   method Bit#(8) led = ledCtrl.led;
   method Bit#(1) uart_txd = tx.txd;
 endmodule
