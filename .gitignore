@@ -5,3 +5,4 @@ build
 *.jou
 *.str
 .DS_Store
+.Xil
