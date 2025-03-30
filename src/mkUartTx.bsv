@@ -2,9 +2,6 @@
 Simple Verilog wrapper for the AXI4S-to-UART transmitter.
 Bluespec user can call send which raises tvalid high.
 User can only call send when tready is high.
-
-Technically this doesn't meet AXI4S specification because tvalid isn't supposed to depend on tready;
-alas, we're working with Bluespec.
 */
 interface UartTx;
   (* always_ready *) method Action  send(Bit#(8) data);
@@ -19,6 +16,7 @@ module mkUartTx(UartTx);
   default_clock clk  (s_axis_aclk);
   default_reset rstn (s_axis_aresetn);
 
+  // see notes about AXI compliance in mkUartRx.bsv
   method        send(s_axis_tdata) enable(s_axis_tvalid) ready(s_axis_tready);
   method tx_bit txd;
 

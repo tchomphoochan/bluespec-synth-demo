@@ -3,9 +3,6 @@ Simple Verilog wrapper for the UART-to-AXI4S receiver.
 rx_bit is set by the outside world.
 Bluespec user can call receive to raise tready high and consume the data
 (which is made available to us through tvalid).
-
-Technically this doesn't meet AXI4S specification because tvalid isn't supposed to depend on tready;
-alas, we're working with Bluespec.
 */
 interface UartRx;
   (* always_ready, always_enabled *)
@@ -23,6 +20,13 @@ module mkUartRx(UartRx);
   default_reset rstn (m_axis_aresetn);
 
   method              rxd(rx_bit)                       enable((*inhigh*) _);
+
+  // bluespec sets m_axis_tready to be combinationally dependent on m_axis_tvalid
+  // i.e. there's a combinational path from m_axis_tvalid to m_axis_tready
+  // BUT this does not violate the axi spec. axi spec actually says: INSIDE THE MODULE,
+  // 1. tready can't wait for tvalid
+  // 2. there can't be combinational path from input signals (tready) to output signals (tvalid)
+  // indeed, the second rule was precisely what makes our external combinational path ok.
   method m_axis_tdata receive()    ready(m_axis_tvalid) enable(m_axis_tready);
 
   schedule (rxd, receive) CF (rxd, receive);
