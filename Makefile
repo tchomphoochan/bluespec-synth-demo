@@ -33,7 +33,7 @@ BSC_FLAGS=+RTS -Ksize -RTS\
   -simdir $(BUILD_DIR)/sim \
   -info-dir $(BUILD_DIR)/info \
   -remove-dollar \
-  --aggressive-conditions --show-schedule \
+  -aggressive-conditions -show-schedule \
   -suppress-warnings $(BSC_SUPPRESSED_WARNINGS) \
   -p +:%/Libraries/FPGA/Xilinx:src \
   -verilog
