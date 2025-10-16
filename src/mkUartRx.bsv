@@ -21,12 +21,9 @@ module mkUartRx(UartRx);
 
   method              rxd(rx_bit)                       enable((*inhigh*) _);
 
-  // bluespec sets m_axis_tready to be combinationally dependent on m_axis_tvalid
-  // i.e. there's a combinational path from m_axis_tvalid to m_axis_tready
-  // BUT this does not violate the axi spec. axi spec actually says: INSIDE THE MODULE,
-  // 1. tready can't wait for tvalid
-  // 2. there can't be combinational path from input signals (tready) to output signals (tvalid)
-  // indeed, the second rule was precisely what makes our external combinational path ok.
+  // interface for BSV user to dequeue from the internal data fifo
+  // verilog asserts m_axis_tvalid, which makes the receive method ready (available) for BSV use.
+  // when BSV decides to dequeue (i.e. enable/run the method), m_axis_tready gets asserted.
   method m_axis_tdata receive()    ready(m_axis_tvalid) enable(m_axis_tready);
 
   schedule (rxd, receive) CF (rxd, receive);

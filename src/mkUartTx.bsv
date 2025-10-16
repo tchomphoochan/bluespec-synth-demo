@@ -16,7 +16,20 @@ module mkUartTx(UartTx);
   default_clock clk  (s_axis_aclk);
   default_reset rstn (s_axis_aresetn);
 
-  // see notes about AXI compliance in mkUartRx.bsv
+  // interface for bsv to enqueue to the internal fifo
+  // method is ready when the verilog code says it's ready
+  // when BSV runs (enables) the method, it asserts s_axis_tvalid.
+
+  // note that this is technically illegal per axi standard:
+  // BSV's output (to verilog) tvalid depended combinationally on input tready.
+  // potential for deadlock/livelock if the verilog implementation doesn't
+  // do a good job at asserting tready as often as possible.
+
+  // MAYBE we could charitably interpret that bsv always tries to assert enable
+  // whenever a rule MIGHT fire (whether it can actually fire or not is another story),
+  // and that the internal module is responsible for only transacting if it asserted tready.
+  // this is unlikely though. this is the key reason why bluespec will never be as performant as verilog.
+  // its semantics is the inverse of what the rest of the fpga world wants.
   method        send(s_axis_tdata) enable(s_axis_tvalid) ready(s_axis_tready);
   method tx_bit txd;
 
